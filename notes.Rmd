@@ -1,0 +1,257 @@
+# SOTM DAY 1
+
+# OpenStreetMap - Now and into the Future
+## Kate Chapman & Heather Leson
+
+Everyone has the same vision: free and open map of the entire world. But how to get there?
+They changed the servers, got GDPR compliant.
+OPEN means:
+
+* Transparency
+* Inclusivity
+* Adaptability
+* Collaboration
+* Community
+
+OpenStreetMap is one thing, but dealing with the community is something different and maybe more complex. This speach is a bit about good feelings, not technical. Lots of slogans, not up to the ask for a plenary introduction.
+
+Recruitment for working groups. What the hell are they?
+
+# Rendering maps without Database
+## Thomas Skowron
+
+### State of the art:
+OSM Planet -> PostreSQL -> Renderer
+PostreSQL is very powerful for spatial operations, but it's a bottleneck. All the fancy stuff ends up there. And the rendering is also a bottleneck.
+PostreSQL: SQL, ACID MVCC & transactions, Indexes, Role permission management, scriptable, fail over...
+BUT: Performance (PostGIS), operational cost, memory consumpion.
+So: do we *need* all that stuff just to render a map?
+
+### Attempts to improve the situation.
+
+* OSM Planet -> PostreSQL -> Vector file "Renderer" -> Client base "renderer"
+Pre-rendered vector tiles: no flexibility
+
+* Clever features to keep vector tiles small. Auto-zoom level, but really hundred of switches. No very easy to understand, still very limited to filtering.
+
+* Flexibility through lua scripting.
+
+But why does one tool has to do everything?
+Step 1: Convert geo data
+Step 2:
+Step 3: Transform/map data
+Step 4: Convert to target format
+
+Suggestion: parse | map-reduce | render
+One tool for every step and task.
+
+Let's not do Shapefiles!!!
+Let's not do OSMPBF!!! Not good for geodata in general.
+
+We need tag structures and future proof tech (duh).
+
+* Shapefile: no tag structure, no future proof, 2 GB size limit
+* GeoJSON: single threaded, kind of future proof (you can add new data)
+* GeoPackage: bad performance (SQLite), not really scalable
+
+We need something new:
+* binary
+* streamable, blocks
+* single stream, not multiple files,
+* not SQLite
+* not overly obscure
+* open and extendable
+
+Suggestion: SPATEN, based on protocol buffers and WKB. Around 50% smaller than GeoJSON. Version 0, very immature.
+
+# Qt to build OSM-based maps
+## Angelelli
+
+### What is Qt?
+"Cross-platform application framework and widget toolkit". Essentially C++, also Javascript, QML
+
+### What is QML
+Qt Modeling Language, user interface markup language. Introduced in Q4, now mature in Qt5.
+
+In Qt5 there are a ton of add-ons.
+### Qt location
+2 submodules: positioning and location.
+#### Positioning
+C++ and QML api to retrieve the current location
+On Linux, WinRT, Android, MacOS, iOS, and serial NMEA
+#### Location
+C++ and QML api for geocoding, routing, and PoI search and manipulation
+QML API for mapping: display maps, add (interactive) content.
+
+Built-in raster engine (looks good), extensible with 3rd party mapping engines. The map can rotate and tilt, you can embed a georeferenced video on top of the map.
+
+New types in Qt5.11 for maps objects.
+
+OpenStreetMap plugin. Qt fully consumes OSM data.
+
+# Large scale Deep Learning for Map Making
+## Aline Negreanu, Gliga Bogdan (Telenav)
+Manually identify features from map is time consuming.
+
+1. Gather images. App for dashcam images
+1. Create tag dataset. You select the features and tag them with icons (traffic lights, street signs, etc.). 70000 labeled images from USA
+1. Detect road signs in images. Create AI system to match images and tags without human intervention. Deep Learning for Object Detection, with autodetection.
+    1. Fully convolution networks + Classifier (Caffe)
+    1. Single-shot detector (keras)
+    1. RetinaNet (Keras)
+
+    Accuracy 92% on 55 classes
+    0.3 s per image on a NVIDIA V100
+
+    They compare their detection against OSM.
+1. Localize the detections. You need the GPS location, there is image location and sign location.
+1. Cluster the detections. Aggregate what refers to the same physical sign. You don't need to map the same sign 10 times, you cluster them and allocate one single location.
+1. Match cluster centroid to a street.
+1. Compare with OSM information: filter out the information which already exists in OSM.
+1. And finally Open source everything http://github.com/telenav/telenav.AI. All detections can viewed and validated in OpenStreetCam.
+
+Competition for detecting traffic signs (10000 $).
+
+
+# How could Deep Learning help to improve OSM Data Quality?
+Awful French accent. Shame.
+Mentions Mabox/robosat. Convolutional networks
+
+# The Belgian perspective to building an OpenStreetMap community
+Turning non-mappers to mappers, then mappers to community.
+Not radically "open-source". https://www.osm.be.
+
+# Here's how we interpolate
+The guy works for Mapzen (which is dead or what?)
+https://github.com/pelias/pelias
+This is about interpolation of addresses. It gives estimates of where adresses that don't exist could be.
+
+# OsmAnd making live maps updates
+Founder of OsmAnd project. Changes happen every month. But updates are generated every 10 min.
+Incremental updates always target specific format. But OBF has 5 independent layers.
+
+# Lies, Damn Lies and Statistics
+Difficult assessment of the importance of tags. Number of objects with that tag could be a clue, but we don't know how many OSM users are behind it.
+You can do all of this with osmium and bash/perl commands. But any language is of course OK.
+The wiki and simple statistics are easy to misread. It's about gender.
+
+# An innovative approach to support OSM data generation
+https://www.hotosm.org/updates/
+Transferable method to extract buildings from images. Automated mapping + Manual mapping, so that the volunteers do not start from scratch. No training sample!!!!
+Multiresolution segmentation.
+Hourglass shape network (Deep learning method).
+
+# Pinpointing the power grid
+https://developmentseed.org/
+
+# Day 2
+
+# Network for transport open data
+## Transport data
+Digital representation of transport systems
+
+1. Maps of routes and stops
+1. SPeeds
+1. Timestables for scheduled services, frequencies
+1. Real-time information
+
+## Transport Open data
+Feeds in
+1. standard format
+1. resource for government and private applications
+
+TransitWand to create GTFS feeds, capture passenger counts
+TransitMix
+
+Measure the increase in the number of jobs with the addition of two new transit routes.
+FInd the optimal location of housing. Accessibility by public transport. 
+Which part of the population has access to the labor market.
+30 and 60 min isochrones by public transport, to be done for several cities.
+https://www.wri.org
+
+# VROOM
+## Julien Coupey
+https://verso-optim.com
+Vehicle routing problems (VRP)
+Travelling salesman problem
+Capacitated vehicle routing problem
+Vehicle routing problem with time-windows
+
+Explosion of computing time when problem size increases.
+
+# OSM in Location Science
+## Jaak Leiste
+OpenMapKit
+
+### What is CARTO
+https://carto.com/
+Demographic data, income, employement and family datasets. Real estate and financial data. Mastercard data.
+Tools Python-based. Matplotlib, geopandas, folium.
+
+### OSM in cartoframes
+No data about people or weather.
+
+Extracting data from OSM is "hard". No osmdata equivalent in Python?
+Osmdata queries whatever you want in human language, almost, and returns nice object divided per geometrical feature (line, polygon, etc.) each of which is a tidy table. And you don't need to download anything bigger than you actual need, a part from the size of the bbox.
+
+# Humans and machine working together
+Development seed
+Same guy as the power grid
+OSM QA Tiles
+Come up with a set of images and labels through QA tiles and keras
+Train with already labeled stuff to detect buildings
+github.com/developmentseed/label-maker
+github.com/mapbox/tippecanoe
+
+single object: classification + localization
+multiple objects: object detection -> instance segmentation
+
+https://developmentseed.org/projects/skynet/
+http://github.com/geohacker/sotm-2018
+
+# 2D and 3D visualization of OpenStreetMap data
+NASA Web WorldWind API, Javascript, WebGL
+http://github.com/kilsedar/3dosm
+http://osm.eoapps.eu
+Height of buildings: earcut algorithm github.com/mapbox/earcut
+
+# Investigating the OSM mapping process after disasters: OsmEventAnalyst and its application for the 2016 Italian earthquake
+Answer of the OSM community. Emergencies workflow:
+* they start to map using old information
+* Task Manager (software developped by HOT) projects
+* Copernicus EMS map very fast and provide data after disasters
+
+OsmEventAnalyst on GitHub
+Some descriptive analytics about who helped and for how long.
+And stats about what they changed.
+
+# Areas-of-Interest for OpenStreetMap with Big Spatial Data Analytics
+## Stefan Keller (?)
+### Areas of interest (AOI) for OpenStreetMap
+* Computer-assisted editing: areas with presumed missing data to be mapped in OSM
+* Tourism
+"Places with a lot of activities, high concentration of restaurants, bars and shops"
+On GoogleMaps they are shaded orange areas
+
+Avuxi.com, heat maps tiles. Toyota's wet dream. Based on OSM, Flickr, etc. Several categories: shopping, sightseeing, eating, nightlife, etc.
+Area-of-interest: Urban area with high concentration of POI, neighborhood level, not building level, based on aggregated category.
+
+Find buildings, cluster them by type, create hulls around clusters, apply network centrality with the street network (this algo defines important streets inside the polygons) + buffer 50 the hulls, exclude water areas and sanitize.
+
+# Workshop routing engines
+iD or JOSM to make edits. Mapping for navigation -> routing. From A to B with human readable instructions.
+The router takes the data and retains only the necessary information.
+To do good maps you must think like a router, different than human thinking.
+A disconnected roundabount will not be part of a network. We know that! (MATsim).
+Intersections are also dealt with in smart ways (no sharp turns).
+
+# Day 3
+# Workshop
+https://github.com/mapbox/workshops/tree/gh-pages/osm-mapbox-gl-studio-Jul-2018
+
+# Deep Neural Net
+imagery to detect buildings
+CNTK - Microsoft Cognitive Toolkit on Azure
+ResNet34
+
+# Overpass Q&A
