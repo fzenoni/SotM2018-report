@@ -9,22 +9,49 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## State of the Map conference 2018 (Milan, July 28-30)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+The State of the Map (SotM) conference has been held this year at the Politecnico di Milano, which is, as per [Wikipedia](https://en.wikipedia.org/wiki/Polytechnic_University_of_Milan) the largest technical university in Italy. It's far from being a niche conference, given the 400 attendees and the 50 nationalities represented. Indeed, [OpenStreetMap](https://www.openstreetmap.org) (OSM) is a growing community, not only heavily used by [non-profit and humanitarian organizations](https://www.hotosm.org/) but more and more by private companies. If we look at the [sponsors list](https://wiki.openstreetmap.org/wiki/State_of_the_Map_2018#Sponsorship), we see it's not only the case for specialized ones such as [Mapbox](https://www.mapbox.com/) or [Mapillary](https://www.mapillary.com/): the business value of crowd-sourced and updated information is indeed appreciated by big to very big players like TeleNav, and even Microsoft/Bing and Facebook.
+One aspect that particularly strikes in the general OSM community is the value given to the contribution to the OSM database. And Facebook sure knew how to make a good impression: at the conference its representative announced that in the last six months they went to use OSM to support their services from 22 countries, to essentially the whole planet, with the notable exceptions of Argentina, India, Pakistan, Russia, and Turkey (China is included in their list, despite the [evidence](https://en.wikipedia.org/wiki/Websites_blocked_in_mainland_China)). Definitely a powerful declaration towards the OSM world.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Nevertheless, there is no reason to believe OSM, nor the conference, was a repository of corporate talks and personalities: many varied people from a lot of horizons were there, from academic to self-employed web developers, simple mapping enthusiasts, and volunteers. Witnessing this enthusiasm and creativity, together with the opportunity to know new people from all around the world and to make new friends, was the best part of the conference.
 
-```{r cars}
-summary(cars)
-```
+I also participated at the poster session. I capitalized on the team's experience to generate a map of Milan (extracted of course from OSM) with a color-coding of the buildings (obtained from the Copernicus project) that express the average time by foot to the five restaurants closest to their centroid. The tracks and times were obtained thanks to the OSRM project. You can see the poster here, as well as the code needed to reproduce it.
 
-## Including Plots
+In the following, I am going to summarize a few of the presentations I have attended.
 
-You can also embed plots, for example:
+### [Qt to build OSM-based maps](https://2018.stateofthemap.org/2018/T023-Qt_to_create_OSM-based_apps/) by Paolo Angelelli
+Qt is a "cross-platform application framework and widget toolkit". To use Qt means essentially to code in C++, but also in Javascript and QML. QML stands for Qt Modeling Language, user interface markup language. It was introduced in Qt4, and is now mature in Qt5.
+Qt5 come with a lot of add-ons.
+In Qt5 there are a ton of add-ons, such as Qt location that comes with submodules:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+* *Positioning*: C++ and QML API to retrieve the current location, which works on Linux, WinRT, Android, MacOS, iOS, and serial NMEA
+* *Location*: C++ and QML API for geocoding, routing, with PoI search and manipulation
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+There's also a QML API for mapping: display maps, add (interactive) content. The framework comes with a built-in raster engine (looks good), extensible with 3rd party mapping engines. The map can rotate and tilt, you can embed a georeferenced video on top of the map.
+Qt5.11 (in development) comes with specific maps objects.
+Finally, an OpenStreetMap plugin is also available. Qt fully consumes OSM data.
+
+I personally don't have any prior experience in developping in Qt, but it's good to know that I can brush off my C++ and use it for this kind of application.
+
+### [Large scale Deep Learning for Map Making](https://2018.stateofthemap.org/2018/T115-Large_Scale_Deep_Learning_for_Map_Making/) by Aline Negreanu, Gliga Bogdan (Telenav)
+Manually identify features from map is time consuming.
+
+1. Gather images. App for dashcam images
+1. Create tag dataset. You select the features and tag them with icons (traffic lights, street signs, etc.). 70000 labeled images from USA
+1. Detect road signs in images. Create AI system to match images and tags without human intervention. Deep Learning for Object Detection, with autodetection.
+    1. Fully convolution networks + Classifier (Caffe)
+    1. Single-shot detector (keras)
+    1. RetinaNet (Keras)
+
+    Accuracy 92% on 55 classes
+    0.3 s per image on a NVIDIA V100
+
+    They compare their detection against OSM.
+1. Localize the detections. You need the GPS location, there is image location and sign location.
+1. Cluster the detections. Aggregate what refers to the same physical sign. You don't need to map the same sign 10 times, you cluster them and allocate one single location.
+1. Match cluster centroid to a street.
+1. Compare with OSM information: filter out the information which already exists in OSM.
+1. And finally Open source everything http://github.com/telenav/telenav.AI. All detections can viewed and validated in OpenStreetCam.
+
+Competition for detecting traffic signs (10000 $).
