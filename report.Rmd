@@ -9,18 +9,19 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## State of the Map conference 2018 (Milan, July 28-30)
+## Report from the State of the Map conference 2018
 
-The State of the Map (SotM) conference has been held this year at the Politecnico di Milano, which is, as per [Wikipedia](https://en.wikipedia.org/wiki/Polytechnic_University_of_Milan) the largest technical university in Italy. It's far from being a niche conference, given the 400 attendees and the 50 nationalities represented. Indeed, [OpenStreetMap](https://www.openstreetmap.org) (OSM) is a growing community, not only heavily used by [non-profit and humanitarian organizations](https://www.hotosm.org/) but more and more by private companies. If we look at the [sponsors list](https://wiki.openstreetmap.org/wiki/State_of_the_Map_2018#Sponsorship), we see it's not only the case for specialized ones such as [Mapbox](https://www.mapbox.com/) or [Mapillary](https://www.mapillary.com/): the business value of crowd-sourced and updated information is indeed appreciated by big to very big players like TeleNav, and even Microsoft/Bing and Facebook.
-One aspect that particularly strikes in the general OSM community is the value given to the contribution to the OSM database. And Facebook sure knew how to make a good impression: at the conference its representative announced that in the last six months they went to use OSM to support their services from 22 countries, to essentially the whole planet, with the notable exceptions of Argentina, India, Pakistan, Russia, and Turkey (China is included in their list, despite the [evidence](https://en.wikipedia.org/wiki/Websites_blocked_in_mainland_China)). Definitely a powerful declaration towards the OSM world.
+The State of the Map (SotM) conference has been held on July 28-30 at the Politecnico di Milano, which is, as per [Wikipedia](https://en.wikipedia.org/wiki/Polytechnic_University_of_Milan) the largest technical university in Italy. It's far from being a niche conference, given the 400 attendees and the 50 nationalities represented. Indeed, [OpenStreetMap](https://www.openstreetmap.org) (OSM) is a growing community, not only heavily used by [non-profit and humanitarian organizations](https://www.hotosm.org/) but more and more by private companies. If we look at the [sponsors list](https://wiki.openstreetmap.org/wiki/State_of_the_Map_2018#Sponsorship), we see it's not only the case for specialized ones such as [Mapbox](https://www.mapbox.com/) or [Mapillary](https://www.mapillary.com/): the business value of crowd-sourced and updated information is indeed appreciated by big to very big players like TeleNav, and even Microsoft/Bing and Facebook.
+One aspect that particularly strikes in the general OSM community is the value given to the contribution to the OSM database. And Facebook sure knew how to make a good impression: at the conference its representative announced that in the last six months they went to use OSM to support their services from 22 countries, to essentially the whole planet, with the notable exceptions of Argentina, India, Pakistan, Russia, and Turkey (China is included in their list, despite the [evidence](https://en.wikipedia.org/wiki/Websites_blocked_in_mainland_China)). Such a declaration of interest towards the OSM world was indeed well received.
 
 Nevertheless, there is no reason to believe OSM, nor the conference, was a repository of corporate talks and personalities: many varied people from a lot of horizons were there, from academic to self-employed web developers, simple mapping enthusiasts, and volunteers. Witnessing this enthusiasm and creativity, together with the opportunity to know new people from all around the world and to make new friends, was the best part of the conference.
 
 I also participated at the poster session. I capitalized on the team's experience to generate a map of Milan (extracted of course from OSM) with a color-coding of the buildings (obtained from the Copernicus project) that express the average time by foot to the five restaurants closest to their centroid. The tracks and times were obtained thanks to the OSRM project. You can see the poster here, as well as the code needed to reproduce it.
 
-In the following, I am going to summarize a few of the presentations I have attended.
+In the following, I am going to summarize a selection of the presentations I have attended.
 
-### [Qt to build OSM-based maps](https://2018.stateofthemap.org/2018/T023-Qt_to_create_OSM-based_apps/) by Paolo Angelelli
+### [Qt to build OSM-based maps](https://2018.stateofthemap.org/2018/T023-Qt_to_create_OSM-based_apps/)
+##### by Paolo Angelelli
 Qt is a "cross-platform application framework and widget toolkit". To use Qt means essentially to code in C++, but also in Javascript and QML. QML stands for Qt Modeling Language, user interface markup language. It was introduced in Qt4, and is now mature in Qt5.
 Qt5 come with a lot of add-ons.
 In Qt5 there are a ton of add-ons, such as Qt location that comes with submodules:
@@ -34,24 +35,36 @@ Finally, an OpenStreetMap plugin is also available. Qt fully consumes OSM data.
 
 I personally don't have any prior experience in developping in Qt, but it's good to know that I can brush off my C++ and use it for this kind of application.
 
-### [Large scale Deep Learning for Map Making](https://2018.stateofthemap.org/2018/T115-Large_Scale_Deep_Learning_for_Map_Making/) by Aline Negreanu, Gliga Bogdan (Telenav)
-Manually identify features from map is time consuming.
+### [Large scale Deep Learning for Map Making](https://2018.stateofthemap.org/2018/T115-Large_Scale_Deep_Learning_for_Map_Making/)
+##### by Aline Negreanu, Gliga Bogdan (TeleNav)
+[TeleNav](https://www.telenav.com/home) is a company providing location-based services based on GPS data, among other things. In this presentation, two employees presented their deep learning strategy to identify features from street images.
 
-1. Gather images. App for dashcam images
-1. Create tag dataset. You select the features and tag them with icons (traffic lights, street signs, etc.). 70000 labeled images from USA
-1. Detect road signs in images. Create AI system to match images and tags without human intervention. Deep Learning for Object Detection, with autodetection.
-    1. Fully convolution networks + Classifier (Caffe)
-    1. Single-shot detector (keras)
-    1. RetinaNet (Keras)
+Several steps were detailed:
 
-    Accuracy 92% on 55 classes
-    0.3 s per image on a NVIDIA V100
+1. Gather images. They have an mobile app for dashcam images
+1. Create tag dataset. Features are selected and tagged with icons (traffic lights, street signs, etc.). There are currently 70000 labeled images from the USA.
+1. Detect road signs in images. They created an AI system to match images and tags without human intervention. Deep Learning for Object Detection is used, with autodetection. This involves:
+    1. Fully convolution networks + Classifier (using [Caffe](http://caffe.berkeleyvision.org/))
+    1. Single-shot detector (using [Keras](https://keras.io/))
+    1. RetinaNet (again Keras)
 
-    They compare their detection against OSM.
-1. Localize the detections. You need the GPS location, there is image location and sign location.
-1. Cluster the detections. Aggregate what refers to the same physical sign. You don't need to map the same sign 10 times, you cluster them and allocate one single location.
+    The accuracy is as high as 92% on 55 classes. The reported elaboration time is 0.3 s per image on a NVIDIA V100.
+
+Their detection is compared against OSM.
+
+1. Localize the user detections. The GPS location is needed, with both image location and sign location.
+1. Cluster the detections. You need to aggregate what refers to the same physical sign. This is because you don't need to map the same sign 10 times, you cluster them and allocate one single location.
 1. Match cluster centroid to a street.
 1. Compare with OSM information: filter out the information which already exists in OSM.
-1. And finally Open source everything http://github.com/telenav/telenav.AI. All detections can viewed and validated in OpenStreetCam.
+1. And finally Open source everything http://github.com/telenav/telenav.AI. All detections can viewed and validated in [OpenStreetCam](http://openstreetcam.org/).
 
-Competition for detecting traffic signs (10000 $).
+They also have a [competition](https://competitions.codalab.org/competitions/19024) for detecting traffic signs (10000 $).
+
+### Other highlights
+During three days attended a lot of other inspirational talks.
+
+* For instance, [Julian Simioni](https://www.twitter.com/juliansimioni) developed [a piece of software](https://github.com/pelias/pelias) that interpolates addresses to estimate street numbers that are not (yet) included in OSM.
+* Emanuela Mihut talked about her ongoing PhD research, able to automate the generation of OSM data thanks to convolutional neural networks. This contribution is aimed at facilitating the work of the [Humanitarian OpenStreetMap Team](https://www.hotosm.org/updates/) in providing a starting point for mapping areas that suffered a natural calamity.
+* Julien Coupet presented VROOM, an open-source solver for Vehicle Routing Problems, which has [live demo app](http://map.vroom-project.org/) to solve the travelling salesman problem.
+* The very nice OSM Belgium team, that organizes [monthly meet-ups](https://www.meetup.com/OpenStreetMap-Belgium/).
+* I attended a nicely organized workshop organized by MapBox, that taught users how to extract data from OSM through Overpass, style it in Mapbox Studio and create an interactive demo. You can find it [here](https://github.com/mapbox/workshops/tree/gh-pages/osm-mapbox-gl-studio-Jul-2018).
