@@ -16,9 +16,12 @@ One aspect that particularly strikes in the general OSM community is the value g
 
 Nevertheless, there is no reason to believe OSM, nor the conference, was a repository of corporate talks and personalities: many varied people from a lot of horizons were there, from academic to self-employed web developers, simple mapping enthusiasts, and volunteers. Witnessing this enthusiasm and creativity, together with the opportunity to know new people from all around the world and to make new friends, was the best part of the conference.
 
-I also participated at the poster session. I capitalized on the team's experience to generate a map of Milan (extracted of course from OSM) with a color-coding of the buildings (obtained from the Copernicus project) that express the average time by foot to the five restaurants closest to their centroid. The tracks and times were obtained thanks to the OSRM project. You can see the poster here, as well as the code needed to reproduce it.
+I also participated at the poster session. I capitalized on the team's experience to generate a map of Milan (extracted of course from OSM) with a color-coding of the buildings (obtained from the Copernicus project) that express the average time by foot to the five restaurants closest to their centroid. The tracks and times were obtained thanks to the OSRM project. You can see the poster [here](https://www.dropbox.com/s/0hbd7832piu4pu0/FZenoni_SotM_Poster.pdf?dl=0), as well as the [source code](https://github.com/fzenoni/SotM-poster-submission) needed to reproduce it. The workflow consists in a set of
 
-In the following, I am going to summarize a selection of the presentations I have attended.
+* a C++ script relying on the [Open Source Routing Machine](http://project-osrm.org/) library to compute the routes and walking distances,
+* and R scripts, for the data manipulation and visualization, mainly with the `sf` and `ggplot2` libraries. 
+
+Among all the presentations I have attended, the following ones caught my attention.
 
 ### [Qt to build OSM-based maps](https://2018.stateofthemap.org/2018/T023-Qt_to_create_OSM-based_apps/)
 ##### by Paolo Angelelli
